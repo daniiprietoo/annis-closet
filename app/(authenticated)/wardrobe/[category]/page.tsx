@@ -4,7 +4,7 @@ import { useQuery } from "convex/react"
 import { api } from "@/convex/_generated/api"
 import { useParams } from "next/navigation"
 
-export default function ItemsPage({ params }: { params: { category: string } }) {
+export default function ItemsPage() {
   const { category }: { category: string } = useParams()
 
   const items = useQuery(api.clothingItems.itemsByCategory, {
