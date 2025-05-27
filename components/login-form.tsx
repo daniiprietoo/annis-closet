@@ -11,14 +11,12 @@ import {
 } from "@/components/ui/card";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const { signIn } = useAuthActions();
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,8 +24,7 @@ export function LoginForm({
     try {
       setIsLoading(true);
       setError(null);
-      await signIn("google");
-      router.push("/");
+      await signIn("google", { redirectTo: "/wardrobe" });
       console.log("Signed in with Google");
     } catch (err) {
       setError("Failed to sign in with Google");
