@@ -15,6 +15,7 @@ import type {
 } from "convex/server";
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
+import type * as profiles from "../profiles.js";
 import type * as wardrobe from "../wardrobe.js";
 
 /**
@@ -28,6 +29,7 @@ import type * as wardrobe from "../wardrobe.js";
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   http: typeof http;
+  profiles: typeof profiles;
   wardrobe: typeof wardrobe;
 }>;
 export declare const api: FilterApi<

@@ -1,9 +1,15 @@
-import { Id } from "@/convex/_generated/dataModel";
+import type { Doc } from "@/convex/_generated/dataModel";
 
-export type ClothingItem = {
+export type ClothingItem = Doc<"clothingItems">;
+export type TradeItem = Doc<"tradeItems">;
+export type Profile = Doc<"profiles">;
+
+export type ClothingItemWithUrl = {
   _id: Id<"clothingItems">;
   _creationTime: number;
-  userId: Id<"users">; // Convex id for users
+  brand?: string | undefined;
+  notes?: string | undefined;
+  userId: Id<"users">;
   name: string;
   category:
     | "tops"
@@ -15,10 +21,8 @@ export type ClothingItem = {
     | "activewear";
   color: string;
   size: string;
-  brand?: string;
   condition: "new" | "like-new" | "good" | "fair";
-  imageUrl: Id<"_storage">; // Convex id for _storage
-  notes?: string;
+  imageUrl: string | null;
   forTrade: boolean;
   createdAt: number;
   updatedAt: number;
