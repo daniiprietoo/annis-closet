@@ -3,6 +3,7 @@ import { api } from "@/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 import { AddItemDialog } from "@/app/(authenticated)/wardrobe/add-item-dialog";
+import type { ClothingItemWithUrl } from "@/lib/types";
 
 export default async function WardrobePage() {
   const items = await fetchQuery(
@@ -29,18 +30,13 @@ export default async function WardrobePage() {
         </div>
       </div>
 
-      {/* Filters 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-        <FiltersBar />
-      </div>
-
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         {items.length === 0 ? (
           <EmptyState />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {items.map((item) => (
+            {items.map((item: ClothingItemWithUrl) => (
               <ItemCard key={item._id} item={item} />
             ))}
           </div>

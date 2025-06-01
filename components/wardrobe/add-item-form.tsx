@@ -288,9 +288,9 @@ export function AddItemForm({ onSuccess }: { onSuccess: () => void }) {
         <Checkbox
           id="forTrade"
           checked={form.forTrade}
-          onCheckedChange={(checked: React.ComponentProps<typeof Checkbox>["checked"]) =>
-            setForm((f) => ({ ...f, forTrade: checked as boolean }))
-          }
+          onCheckedChange={(
+            checked: React.ComponentProps<typeof Checkbox>["checked"],
+          ) => setForm((f) => ({ ...f, forTrade: checked as boolean }))}
         />
         <Label htmlFor="forTrade" className="text-sm font-medium">
           Available for trade
@@ -303,12 +303,7 @@ export function AddItemForm({ onSuccess }: { onSuccess: () => void }) {
         </div>
       )}
 
-      <Button
-        type="submit"
-        disabled={loading}
-        className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-        size="lg"
-      >
+      <Button type="submit" disabled={loading} variant="gradient" size="lg">
         {loading ? "Adding Item..." : "Add to Wardrobe"}
       </Button>
     </form>
