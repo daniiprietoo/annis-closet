@@ -121,14 +121,17 @@ export function AddItemForm({ onSuccess }: { onSuccess: () => void }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-6 px-2 sm:px-0 max-w-md w-full mx-auto overflow-y-auto max-h-[90vh]"
+    >
       {/* Image Upload */}
       <div className="space-y-2">
         <Label htmlFor="image" className="text-sm font-medium">
           Item Photo *
         </Label>
         <Card className="border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-purple-400 transition-colors">
-          <CardContent className="p-6">
+          <CardContent className="p-2 md:p-6">
             {imagePreview ? (
               <div className="relative">
                 <Image
@@ -136,7 +139,7 @@ export function AddItemForm({ onSuccess }: { onSuccess: () => void }) {
                   height={400}
                   src={imagePreview || "/placeholder.svg"}
                   alt="Preview"
-                  className="w-full h-48 object-cover rounded-lg"
+                  className="w-full h-40 md:h-48 object-cover rounded-lg"
                 />
                 <Button
                   type="button"
@@ -181,7 +184,7 @@ export function AddItemForm({ onSuccess }: { onSuccess: () => void }) {
       </div>
 
       {/* Basic Info */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="space-y-2">
           <Label htmlFor="name">Item Name *</Label>
           <Input
@@ -215,7 +218,7 @@ export function AddItemForm({ onSuccess }: { onSuccess: () => void }) {
       </div>
 
       {/* Details */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div className="space-y-2">
           <Label htmlFor="color">Color *</Label>
           <Input
