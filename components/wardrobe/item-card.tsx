@@ -12,7 +12,7 @@ export function ItemCard({ item }: { item: ClothingItemWithUrl }) {
     router.push(`/wardrobe/${item._id}`)
   }
   return (
-    <div onClick={handleClick} className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-slate-200/60 dark:border-slate-700/60 overflow-hidden cursor-pointer">
+    <div onClick={handleClick} className="bg-white dark:bg-accent rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-slate-200/60 dark:border-slate-700/60 overflow-hidden cursor-pointer">
       <div className="relative aspect-[4/5] bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 overflow-hidden">
         <Image
           src={item.imageUrl || "/placeholder.svg"}

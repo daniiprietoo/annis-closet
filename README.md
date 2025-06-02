@@ -1,46 +1,58 @@
-# Welcome to your Convex + Next.js + Convex Auth app
+# Anni's Wardrobe
 
-This is a [Convex](https://convex.dev/) project created with [`npm create convex`](https://www.npmjs.com/package/create-convex).
+A modern digital wardrobe app built with Next.js, Convex, and Convex Auth.
 
-After the initial setup (<2 minutes) you'll have a working full-stack app using:
+## Overview
 
-- Convex as your backend (database, server logic)
-- [React](https://react.dev/) as your frontend (web page interactivity)
-- [Next.js](https://nextjs.org/) for optimized web hosting and page routing
-- [Tailwind](https://tailwindcss.com/) for building great looking accessible UI
-- [Convex Auth](https://labs.convex.dev/auth) for authentication
+Anni's Wardrobe lets you manage your clothing items, organize your digital closet, and trade items with others. Authentication is handled via Convex Auth (Google sign-in). The backend is made with Convex for real-time data and file storage.
 
-## Get started
+## Features
 
-If you just cloned this codebase and didn't use `npm create convex`, run:
+- User authentication (Google, via Convex Auth)
+- Add, edit, and delete clothing items with images
+- Organize wardrobe by category, size, color, and more
+- Mark items as available for trade
+- View and manage your profile
+- Responsive, modern UI with Tailwind CSS and Shadcn UI
+
+## Tech Stack
+
+- Frontend: Next.js (App Router), React, Tailwind CSS, Shadcn UI
+- Backend: Convex (database, file storage, serverless functions)
+- Auth: Convex Auth (Google OAuth)
+
+## Getting Started
+
+Install dependencies:
 
 ```sh
 npm install
+```
+
+Set up environment variables:
+
+```sh
+cp .env.local.example .env.local
+```
+
+Start the development servers:
+
+```sh
 npm run dev
 ```
 
-If you're reading this README on GitHub and want to use this template, run:
+This runs both the Next.js frontend and Convex backend locally.
 
-```sh
-npm create convex@latest -- -t nextjs-convexauth
-```
+Open the app:
 
-## Learn more
+Visit [http://localhost:3000](http://localhost:3000) in your browser.
 
-To learn more about developing your project with Convex, check out:
+## Useful Links
 
-- The [Tour of Convex](https://docs.convex.dev/get-started) for a thorough introduction to Convex principles.
-- The rest of [Convex docs](https://docs.convex.dev/) to learn about all Convex features.
-- [Stack](https://stack.convex.dev/) for in-depth articles on advanced topics.
-- [Convex Auth docs](https://labs.convex.dev/auth) for documentation on the Convex Auth library.
+- [Convex Docs](https://docs.convex.dev/)
+- [Convex Auth Docs](https://docs.convex.dev/auth)
+- [Next.js Docs](https://nextjs.org/docs)
+- [Tailwind CSS Docs](https://tailwindcss.com/docs)
 
-## Configuring other authentication methods
-
-To configure different authentication methods, see [Configuration](https://labs.convex.dev/auth/config) in the Convex Auth docs.
-
-## Join the community
-
-Join thousands of developers building full-stack apps with Convex:
-
-- Join the [Convex Discord community](https://convex.dev/community) to get help in real-time.
-- Follow [Convex on GitHub](https://github.com/get-convex/), star and contribute to the open-source implementation of Convex.
+## License
+This project is for educational/demo purposes.

@@ -25,11 +25,13 @@ import { Repeat, Star, ZoomIn } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { useState } from "react";
 import { EditItemDialog } from "./item-dialogs";
+import { toast } from "sonner";
 
 export default function WardrobeItemDetail({ itemId }: { itemId: string }) {
   const [isFavorited, setIsFavorited] = useState(false);
   const [isImageZoomed, setIsImageZoomed] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const item = useQuery(api.wardrobe.getItemById, {
     itemId: itemId as Id<"clothingItems">,
@@ -56,9 +58,9 @@ export default function WardrobeItemDetail({ itemId }: { itemId: string }) {
 
   if (item === null) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-accent dark:via-accent dark:to-accent flex items-center justify-center">
         <div className="text-center">
-          <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-r from-red-100 to-pink-100 dark:from-red-900/30 dark:to-pink-900/30 rounded-full flex items-center justify-center">
+          <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-r from-red-100 to-pink-100 dark:from-900/30 dark:to-pink-900/30 rounded-full flex items-center justify-center">
             <ShoppingBag className="w-12 h-12 text-red-500" />
           </div>
           <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">
@@ -89,8 +91,10 @@ export default function WardrobeItemDetail({ itemId }: { itemId: string }) {
     try {
       await deleteItem({ itemId: itemId as Id<"clothingItems"> });
       router.push("/wardrobe");
+      toast.success("Item deleted successfully");
     } catch (error) {
       console.error("Error deleting item:", error);
+      toast.error("Error deleting item");
     } finally {
       setIsDeleting(false);
     }
@@ -105,11 +109,22 @@ export default function WardrobeItemDetail({ itemId }: { itemId: string }) {
           url: window.location.href,
         });
       } catch (error) {
+        toast.error("Error sharing");
         console.log("Error sharing:", error);
       }
     } else {
-      navigator.clipboard.writeText(window.location.href);
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success("Link copied to clipboard");
+      } catch (error) {
+        toast.error("Error copying link");
+        console.log("Error copying link:", error);
+      }
     }
+  };
+
+  const handleTrade = () => {
+    toast.success("Feature coming soon!");
   };
 
   const conditionColors = {
@@ -128,15 +143,15 @@ export default function WardrobeItemDetail({ itemId }: { itemId: string }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-primary/10 dark:via-secondary/10 dark:to-accent/10">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-200/50 dark:border-slate-700/50">
+      <div className="top-0 z-10 bg-white/80 dark:bg-primary/5 backdrop-blur-lg border-b border-slate-200/50 dark:border-slate-700/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <Button
-              variant="ghost"
+              variant="outline"
               onClick={handleBack}
-              className="flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="flex items-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Wardrobe
@@ -146,7 +161,7 @@ export default function WardrobeItemDetail({ itemId }: { itemId: string }) {
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsFavorited(!isFavorited)}
-                className={`hover:bg-red-50 hover:text-red-500 ${isFavorited ? "text-red-500 bg-red-50" : ""}`}
+                className={`hover:text-red-500 ${isFavorited ? "text-red-500" : ""}`}
               >
                 <Heart
                   className={`w-5 h-5 ${isFavorited ? "fill-current" : ""}`}
@@ -166,14 +181,75 @@ export default function WardrobeItemDetail({ itemId }: { itemId: string }) {
                   router.refresh();
                 }}
               />
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleDelete}
-                className="hover:bg-red-50 hover:text-red-500"
+              <Dialog
+                open={isDeleteDialogOpen}
+                onOpenChange={setIsDeleteDialogOpen}
               >
-                <Trash2 className="w-5 h-5" />
-              </Button>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsDeleteDialogOpen(true)}
+                    className="hover:bg-red-50 hover:text-red-500"
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? (
+                      <svg
+                        className="animate-spin h-5 w-5 text-red-500"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                        ></path>
+                      </svg>
+                    ) : (
+                      <Trash2 className="w-5 h-5" />
+                    )}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-sm">
+                  <div className="space-y-4">
+                    <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                      Confirm Deletion
+                    </h2>
+                    <p className="text-slate-600 dark:text-slate-400">
+                      Are you sure you want to delete this item? This action
+                      cannot be undone.
+                    </p>
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsDeleteDialogOpen(false)}
+                        disabled={isDeleting}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={async () => {
+                          await handleDelete();
+                          setIsDeleteDialogOpen(false);
+                        }}
+                        disabled={isDeleting}
+                      >
+                        {isDeleting ? "Deleting..." : "Delete"}
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </div>
@@ -183,8 +259,8 @@ export default function WardrobeItemDetail({ itemId }: { itemId: string }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Image Section */}
           <div className="space-y-4">
-            <Card className="overflow-hidden border-0 shadow-2xl">
-              <div className="relative aspect-[4/5] bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800">
+            <Card className="overflow-hidden border-0 shadow-2xl bg-transparent">
+              <div className="relative aspect-[4/5]">
                 <Image
                   src={item.imageUrl || "/placeholder.svg"}
                   alt={item.name}
@@ -346,7 +422,12 @@ export default function WardrobeItemDetail({ itemId }: { itemId: string }) {
 
             {/* Action Buttons */}
             {item.forTrade && (
-              <Button variant="outline" size="lg" className="flex-1">
+              <Button
+                onClick={handleTrade}
+                variant="outline"
+                size="lg"
+                className="flex-1"
+              >
                 <Repeat className="w-4 h-4 mr-2" />
                 Trade This Item
               </Button>

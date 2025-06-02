@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export function LoginForm({
   className,
@@ -25,9 +26,10 @@ export function LoginForm({
       setIsLoading(true);
       setError(null);
       await signIn("google", { redirectTo: "/wardrobe" });
-      console.log("Signed in with Google");
+      toast.success("Signed in with Google");
     } catch (err) {
       setError("Failed to sign in with Google");
+      toast.error("Failed to sign in with Google");
       console.error(err);
     } finally {
       setIsLoading(false);
