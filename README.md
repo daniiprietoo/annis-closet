@@ -14,14 +14,14 @@ After the initial setup (<2 minutes) you'll have a working full-stack app using:
 
 If you just cloned this codebase and didn't use `npm create convex`, run:
 
-```
+```sh
 npm install
 npm run dev
 ```
 
 If you're reading this README on GitHub and want to use this template, run:
 
-```
+```sh
 npm create convex@latest -- -t nextjs-convexauth
 ```
 
