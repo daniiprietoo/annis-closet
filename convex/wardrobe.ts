@@ -136,7 +136,7 @@ export const getItemById = query({
       ? await ctx.storage.getUrl(item.imageUrl)
       : null;
 
-    return { ...item, imageUrl };
+    return { ...item, imageUrl, imageStorageId: item.imageUrl };
   },
 });
 

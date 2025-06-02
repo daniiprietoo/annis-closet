@@ -18,9 +18,10 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
-import { Upload, ImageIcon } from "lucide-react";
+import { Upload, ImageIcon, Share2 } from "lucide-react";
 import type { Id } from "@/convex/_generated/dataModel";
 import Image from "next/image";
+import { toast } from "sonner";
 
 const categories = [
   "tops",
@@ -39,7 +40,7 @@ type Condition = (typeof conditions)[number];
 
 type AddOrEditItemFormProps = {
   onSuccess: () => void;
-  itemId?: Id<"clothingItems">; // If present, edit mode; else, add mode
+  itemId?: Id<"clothingItems">;
 };
 
 export function AddOrEditItemForm({
@@ -83,14 +84,18 @@ export function AddOrEditItemForm({
     if (item && itemId) {
       setForm({
         name: item.name || "",
-        category: item.category || categories[0],
+        category: categories.includes(item.category)
+          ? item.category
+          : categories[0],
         color: item.color || "",
         size: item.size || "",
         brand: item.brand || "",
-        condition: item.condition || conditions[0],
+        condition: conditions.includes(item.condition)
+          ? item.condition
+          : conditions[0],
         notes: item.notes || "",
         forTrade: item.forTrade || false,
-        imageUrl: item.imageUrl || null,
+        imageUrl: item.imageStorageId || null,
       });
       setImagePreview(item.imageUrl || null);
     }
@@ -124,28 +129,34 @@ export function AddOrEditItemForm({
           body: imageFile,
         });
         const { storageId: responseId } = await response.json();
-        storageId = responseId as Id<"_storage">;
+        storageId = responseId;
+        toast.success("Image uploaded successfully");
       } catch {
+        toast.error("Image upload failed");
         setError("Image upload failed");
         setLoading(false);
         return;
       }
     }
 
-    if (!itemId) {
-      if (!storageId) {
-        setError("Image is required");
-        setLoading(false);
-        return;
-      }
+    if (!itemId && !storageId) {
+      toast.error("Image is required");
+      setError("Image is required");
+      setLoading(false);
+      return;
+    }
+
+    if (!itemId && storageId) {
       try {
         await createItem({
           ...form,
           imageUrl: storageId,
         });
         setLoading(false);
+        toast.success("Item added successfully");
         onSuccess();
       } catch {
+        toast.error("Failed to add item");
         setError("Failed to add item");
         setLoading(false);
       }
@@ -154,22 +165,60 @@ export function AddOrEditItemForm({
 
     try {
       await updateItem({
-        itemId,
+        itemId: itemId as Id<"clothingItems">,
         ...form,
         imageUrl: storageId ? storageId : (form.imageUrl as Id<"_storage">),
       });
       setLoading(false);
+      toast.success("Item updated successfully");
       onSuccess();
     } catch {
+      toast.error("Failed to update item");
       setError("Failed to update item");
       setLoading(false);
     }
   }
 
+  const handleShare = async () => {
+    if (loading) return; // Prevent double share
+    setLoading(true);
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: item?.name || "",
+          text: `Check out this ${item?.category} from my wardrobe!`,
+          url: window.location.href,
+        });
+        toast.success("Link shared successfully.");
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          if (error.name === "AbortError") {
+            toast.error("Share canceled");
+          } else if (error.name === "InvalidStateError") {
+            toast.error("Share in progress");
+          }
+        } else {
+          toast.error("Error sharing");
+        }
+        console.error("Error sharing:", error);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success("Link copied to clipboard");
+      } catch {
+        toast.error("Error copying link");
+      }
+      setLoading(false);
+    }
+  };
+
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 px-2 sm:px-4 max-w-xl w-full mx-auto overflow-y-auto max-h-[70vh]"
+      className="space-y-6 px-2 sm:px-4 max-w-2xl w-full mx-auto overflow-y-auto max-h-[70vh]"
     >
       {/* Image Upload */}
       <div className="space-y-2">
@@ -219,11 +268,11 @@ export function AddOrEditItemForm({
             )}
             <input
               id="image"
+              name="image"
               type="file"
               accept="image/*"
               onChange={handleImageChange}
               className="hidden"
-              required
             />
           </CardContent>
         </Card>
@@ -360,6 +409,16 @@ export function AddOrEditItemForm({
           : itemId
             ? "Update Item"
             : "Add to Wardrobe"}
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={handleShare}
+        className="hover:bg-blue-50 hover:text-blue-500"
+        disabled={loading}
+      >
+        <Share2 className="w-5 h-5" />
       </Button>
     </form>
   );

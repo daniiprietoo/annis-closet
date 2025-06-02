@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import {AddOrEditItemForm} from "@/components/wardrobe/add-edit-item-form";
+import { AddOrEditItemForm } from "@/components/wardrobe/add-edit-item-form";
 import { Pencil, Plus, Sparkles } from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
 
@@ -39,11 +39,17 @@ export function AddItemDialog({ onSuccess }: { onSuccess?: () => void }) {
   );
 }
 
-export function EditItemDialog({ onSuccess, itemId }: { onSuccess?: () => void, itemId: string }) {
+export function EditItemDialog({
+  onSuccess,
+  itemId,
+}: {
+  onSuccess?: () => void;
+  itemId: string;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen} >
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button size="lg" variant="gradient">
           <Pencil className="w-5 h-5 mr-2" />
@@ -55,6 +61,7 @@ export function EditItemDialog({ onSuccess, itemId }: { onSuccess?: () => void, 
           Edit Item
         </DialogTitle>
         <AddOrEditItemForm
+          key={open ? itemId : "closed"}
           onSuccess={() => {
             setOpen(false);
             onSuccess?.();
@@ -65,4 +72,3 @@ export function EditItemDialog({ onSuccess, itemId }: { onSuccess?: () => void, 
     </Dialog>
   );
 }
-

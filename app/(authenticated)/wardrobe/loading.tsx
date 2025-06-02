@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function WardrobeLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-r from-purple-600/10 via-pink-600/10 to-blue-600/10">
+    <div className="min-h-screen bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10">
       <div className="relative overflow-hidden">
         <div className="absolute inset-0" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12">
