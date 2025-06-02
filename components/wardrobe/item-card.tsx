@@ -1,11 +1,18 @@
+'use client'
+
 import { Repeat, Star } from "lucide-react";
 import Image from "next/image";
 import type { ClothingItemWithUrl } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
 
 export function ItemCard({ item }: { item: ClothingItemWithUrl }) {
+  const router = useRouter()
+  const handleClick = async () => {
+    router.push(`/wardrobe/${item._id}`)
+  }
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-slate-200/60 dark:border-slate-700/60 overflow-hidden">
+    <div onClick={handleClick} className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-slate-200/60 dark:border-slate-700/60 overflow-hidden cursor-pointer">
       <div className="relative aspect-[4/5] bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 overflow-hidden">
         <Image
           src={item.imageUrl || "/placeholder.svg"}

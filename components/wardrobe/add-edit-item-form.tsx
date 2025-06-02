@@ -2,8 +2,8 @@
 
 import type React from "react";
 
-import { useState } from "react";
-import { useMutation } from "convex/react";
+import { useState, useEffect } from "react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -37,12 +37,24 @@ type Category = (typeof categories)[number];
 const conditions = ["new", "like-new", "good", "fair"] as const;
 type Condition = (typeof conditions)[number];
 
-export function AddItemForm({ onSuccess }: { onSuccess: () => void }) {
+type AddOrEditItemFormProps = {
+  onSuccess: () => void;
+  itemId?: Id<"clothingItems">; // If present, edit mode; else, add mode
+};
+
+export function AddOrEditItemForm({
+  onSuccess,
+  itemId,
+}: AddOrEditItemFormProps) {
   const createItem = useMutation(api.wardrobe.createItem);
+  const updateItem = useMutation(api.wardrobe.updateItem);
   const generateUploadUrl = useMutation(api.wardrobe.generateUploadUrl);
+
+  const item = useQuery(api.wardrobe.getItemById, itemId ? { itemId } : "skip");
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
   const [form, setForm] = useState<{
     name: string;
     category: Category;
@@ -52,6 +64,7 @@ export function AddItemForm({ onSuccess }: { onSuccess: () => void }) {
     condition: Condition;
     notes: string;
     forTrade: boolean;
+    imageUrl: string | null;
   }>({
     name: "",
     category: categories[0],
@@ -61,9 +74,27 @@ export function AddItemForm({ onSuccess }: { onSuccess: () => void }) {
     condition: conditions[0],
     notes: "",
     forTrade: false,
+    imageUrl: null,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (item && itemId) {
+      setForm({
+        name: item.name || "",
+        category: item.category || categories[0],
+        color: item.color || "",
+        size: item.size || "",
+        brand: item.brand || "",
+        condition: item.condition || conditions[0],
+        notes: item.notes || "",
+        forTrade: item.forTrade || false,
+        imageUrl: item.imageUrl || null,
+      });
+      setImagePreview(item.imageUrl || null);
+    }
+  }, [item, itemId]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -82,18 +113,16 @@ export function AddItemForm({ onSuccess }: { onSuccess: () => void }) {
     setLoading(true);
     setError(null);
 
-    let storageId: Id<"_storage">;
+    let storageId: Id<"_storage"> | null = null;
 
     if (imageFile) {
       try {
         const uploadUrl = await generateUploadUrl();
-
         const response = await fetch(uploadUrl, {
           method: "POST",
-          headers: { "Content-Type": imageFile!.type },
+          headers: { "Content-Type": imageFile.type },
           body: imageFile,
         });
-
         const { storageId: responseId } = await response.json();
         storageId = responseId as Id<"_storage">;
       } catch {
@@ -101,21 +130,38 @@ export function AddItemForm({ onSuccess }: { onSuccess: () => void }) {
         setLoading(false);
         return;
       }
-    } else {
-      setError("Image is required");
-      setLoading(false);
+    }
+
+    if (!itemId) {
+      if (!storageId) {
+        setError("Image is required");
+        setLoading(false);
+        return;
+      }
+      try {
+        await createItem({
+          ...form,
+          imageUrl: storageId,
+        });
+        setLoading(false);
+        onSuccess();
+      } catch {
+        setError("Failed to add item");
+        setLoading(false);
+      }
       return;
     }
 
     try {
-      await createItem({
+      await updateItem({
+        itemId,
         ...form,
-        imageUrl: storageId,
+        imageUrl: storageId ? storageId : (form.imageUrl as Id<"_storage">),
       });
       setLoading(false);
       onSuccess();
     } catch {
-      setError("Failed to add item");
+      setError("Failed to update item");
       setLoading(false);
     }
   }
@@ -123,7 +169,7 @@ export function AddItemForm({ onSuccess }: { onSuccess: () => void }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 px-2 sm:px-0 max-w-md w-full mx-auto overflow-y-auto max-h-[90vh]"
+      className="space-y-6 px-2 sm:px-4 max-w-xl w-full mx-auto overflow-y-auto max-h-[70vh]"
     >
       {/* Image Upload */}
       <div className="space-y-2">
@@ -307,7 +353,13 @@ export function AddItemForm({ onSuccess }: { onSuccess: () => void }) {
       )}
 
       <Button type="submit" disabled={loading} variant="gradient" size="lg">
-        {loading ? "Adding Item..." : "Add to Wardrobe"}
+        {loading
+          ? itemId
+            ? "Updating Item..."
+            : "Adding Item..."
+          : itemId
+            ? "Update Item"
+            : "Add to Wardrobe"}
       </Button>
     </form>
   );
