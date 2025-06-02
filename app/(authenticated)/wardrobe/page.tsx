@@ -2,7 +2,7 @@ import { ItemCard } from "@/components/wardrobe/item-card";
 import { api } from "@/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
-import { AddItemDialog } from "@/app/(authenticated)/wardrobe/add-item-dialog";
+import { AddItemDialog } from "@/components/wardrobe/item-dialogs";
 import type { ClothingItemWithUrl } from "@/lib/types";
 
 export default async function WardrobePage() {
