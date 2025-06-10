@@ -3,8 +3,9 @@ import { api } from "@/convex/_generated/api";
 import { AddItemDialog } from "@/components/wardrobe/item-dialogs";
 import WardrobeGrid from "@/components/wardrobe/wardrobe-grid";
 
-export default function WardrobePage() {
-  const preloaded = preloadQuery(api.wardrobe.getWardrobeForUser, {});
+export default async function WardrobePage() {
+  const preloaded = await preloadQuery(api.wardrobe.getWardrobeForUser, {});
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10">
       {/* Header Section */}

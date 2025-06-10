@@ -1,13 +1,17 @@
 "use client";
 
-import { useQuery } from "convex/react";
+import { Preloaded, usePreloadedQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { ItemCard } from "@/components/wardrobe/item-card";
 import { AddItemDialog } from "@/components/wardrobe/item-dialogs";
 import type { ClothingItemWithUrl } from "@/lib/types";
 
-export default function WardrobeGrid({ preloaded }: { preloaded: any }) {
-  const items = useQuery(api.wardrobe.getWardrobeForUser, {}, { preloaded });
+export default function WardrobeGrid({
+  preloaded,
+}: {
+  preloaded: Preloaded<typeof api.wardrobe.getWardrobeForUser>;
+}) {
+  const items = usePreloadedQuery(preloaded);
 
   if (items === undefined) {
     // Loading state (optional: you can add a skeleton here)
