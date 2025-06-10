@@ -8,9 +8,10 @@ const WardrobeItemDetail = dynamic(
 export default async function WardrobeItemPage({
   params,
 }: {
-  params: { itemId: string };
+  params: Promise<{ itemId: string }>;
 }) {
-  const { itemId } = params;
+  const resolvedParams = await params;
+  const { itemId } = resolvedParams;
 
   return <WardrobeItemDetail itemId={itemId} />;
 }
